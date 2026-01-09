@@ -34,7 +34,7 @@ func main() {
 	fmt.Println("By davidonlinearchive")
 	fmt.Println("===============================================================")
 
-	if err := cfg.runGoBrute(); err != nil {
+	if err := cfg.runDirBute(); err != nil {
 		fmt.Println("Error: ", err)
 	}
 

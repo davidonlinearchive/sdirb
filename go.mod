@@ -1,3 +1,3 @@
-module github.com/davidonlinearchive/gobrute
+module github.com/davidonlinearchive/sdirb
 
 go 1.25.5

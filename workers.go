@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (c *config) runGoBrute() error {
+func (c *config) runDirBute() error {
 	jobs := make(chan string, c.threads)
 	var wg sync.WaitGroup
 
@@ -30,8 +30,8 @@ func (c *config) runGoBrute() error {
 		//  wg.Go simplfies traditional goroutines management (added in go 1.25)
 		wg.Go(func() {
 			for path := range jobs {
-				u := fmt.Sprintf("%s/%s", c.targetURL, path)
-				u = strings.TrimRight(u, "/")
+				u := fmt.Sprintf("%s/%s", strings.TrimRight(c.targetURL, "/"),
+					strings.TrimLeft(path, "/"))
 				resp, err := client.Get(u)
 				if err == nil {
 					if resp.StatusCode != 404 {
