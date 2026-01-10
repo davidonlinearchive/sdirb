@@ -30,7 +30,7 @@ func main() {
 
 	// GOBRUTE HEADER
 	fmt.Println("===============================================================")
-	fmt.Println("Gobrute (BETA)")
+	fmt.Println("sdirb v 1.0")
 	fmt.Println("By davidonlinearchive")
 	fmt.Println("===============================================================")
 
