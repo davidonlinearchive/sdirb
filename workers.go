@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (c *config) runDirBute() error {
+func (c *config) runDirBrute() error {
 	jobs := make(chan string, c.threads)
 	var wg sync.WaitGroup
 	var mu sync.Mutex
@@ -53,6 +53,7 @@ func (c *config) runDirBute() error {
 
 				if err == nil {
 					if resp.StatusCode != 404 {
+						/* ensures only one thread can clear the bar and print at a time */
 						mu.Lock()
 						bar.Clear()
 						fmt.Printf("[%d] %s\n", resp.StatusCode, u)

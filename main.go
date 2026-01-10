@@ -28,13 +28,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	// GOBRUTE HEADER
+	//SDirB HEADER
 	fmt.Println("===============================================================")
-	fmt.Println("sdirb v 1.0")
+	fmt.Println("sdirb v1.0")
 	fmt.Println("By davidonlinearchive")
 	fmt.Println("===============================================================")
 
-	if err := cfg.runDirBute(); err != nil {
+	if err := cfg.runDirBrute(); err != nil {
 		fmt.Println("Error: ", err)
 	}
 
