@@ -13,6 +13,7 @@ import (
 func (c *config) runDirBute() error {
 	jobs := make(chan string, c.threads)
 	var wg sync.WaitGroup
+	var mu sync.Mutex
 
 	client := &http.Client{
 		Timeout: time.Duration(c.timeout) * time.Second,
@@ -25,6 +26,22 @@ func (c *config) runDirBute() error {
 	}
 	defer file.Close()
 
+	// Count real paths (skipping comments) for the bar total
+	scanner := bufio.NewScanner(file)
+	totalPaths := 0
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line != "" && !strings.HasPrefix(line, "#") {
+			totalPaths++
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return err
+	}
+	file.Seek(0, 0) // Reset to start of file
+
+	bar := newProgressBar(totalPaths)
+
 	// start worker pool
 	for i := 0; i < c.threads; i++ {
 		//  wg.Go simplfies traditional goroutines management (added in go 1.25)
@@ -33,25 +50,36 @@ func (c *config) runDirBute() error {
 				u := fmt.Sprintf("%s/%s", strings.TrimRight(c.targetURL, "/"),
 					strings.TrimLeft(path, "/"))
 				resp, err := client.Get(u)
+
 				if err == nil {
 					if resp.StatusCode != 404 {
+						mu.Lock()
+						bar.Clear()
 						fmt.Printf("[%d] %s\n", resp.StatusCode, u)
+						mu.Unlock()
 					}
 					resp.Body.Close()
 				}
+				bar.Add(1)
 			}
 		})
 	}
 
-	scanner := bufio.NewScanner(file)
+	scanner = bufio.NewScanner(file)
 	for scanner.Scan() {
-		jobs <- scanner.Text() // converts Paths to strings and sends it to a jobs channel
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		jobs <- line
 	}
+
 	if err := scanner.Err(); err != nil {
 		return err
 	}
 	close(jobs)
 
 	wg.Wait() // Ensures waitgroup counter is zero before exiting
+	fmt.Println()
 	return nil
 }
