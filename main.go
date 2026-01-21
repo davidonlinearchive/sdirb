@@ -31,7 +31,13 @@ func main() {
 	//SDirB HEADER
 	fmt.Println("===============================================================")
 	fmt.Println("sdirb v1.0")
-	fmt.Println("By davidonlinearchive")
+	fmt.Println("By @davidonlinearchive")
+	fmt.Println("===============================================================")
+	fmt.Printf("URL:            			%s\n", cfg.targetURL)
+	fmt.Printf("HTTP Method:				GET\n")
+	fmt.Printf("Threads:				%d\n", cfg.threads)
+	fmt.Printf("Wordlist:				%s\n", cfg.wordlistPath)
+	fmt.Printf("Timeout:				%ds\n", cfg.timeout)
 	fmt.Println("===============================================================")
 
 	if err := cfg.runDirBrute(); err != nil {
